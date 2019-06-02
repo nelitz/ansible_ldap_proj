@@ -1,0 +1,29 @@
+---
+- hosts: ldapserver
+  become: true
+  become_user: root
+  tasks:
+    - name: Installs slapd & ldap_server on the ubuntu server
+      apt: 
+        name: ['slapd', 'ldap-utils']
+        update_cache: true
+        state: present
+	
+  roles:
+  - slapd-config
+    slap_dmodules_path: /usr/lib/ldap
+    slapd_olc_rootdn_password: {{'PWfromCLI'}}
+    slapd_mdb_rootdn_password: {{'PWfromCLI'}}
+    slapd_monitor_rootdn_password: {{'PWfromCLI'}}
+    slapd_additional_modules: [ 'memberof' ]
+    slapd_mdb_config:
+      olcSuffix: "dc=example,dc=com"
+    slapd_mdb_overlays:
+      memberof:
+        olcOverlay: memberof
+        objectClass: olcMemberOf
+        olcMemberOfDangling: ignore
+
+
+
+
