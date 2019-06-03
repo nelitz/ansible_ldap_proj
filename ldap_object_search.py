@@ -1,9 +1,11 @@
 import ldap
 
+#create a connection to the ldap server
 l = ldap.open("127.0.0.1")
 l.protocol_version = ldap.VERSION3	
 
-cn = raw_input("type the desired cn >>> "
+#indicate the object & retrieve its attributes
+cn = raw_input("type the desired cn (user/computer) >>> "
 baseDN = "o=test.com"
 searchScope = ldap.SCOPE_SUBTREE
 retrieveAttributes = None 
