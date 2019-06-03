@@ -8,8 +8,8 @@
         name: ['slapd', 'ldap-utils']
         update_cache: true
         state: present
-	
-     - name: Start and Enable slapd (LDAP deamon)
+
+    - name: Start and Enable slapd (LDAP deamon)
        service: 
          name: slapd 
          state: started 
