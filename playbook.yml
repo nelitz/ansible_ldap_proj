@@ -9,21 +9,34 @@
         update_cache: true
         state: present
 	
-  roles:
-  - slapd-config
-    slap_dmodules_path: /usr/lib/ldap
-    slapd_olc_rootdn_password: {{'PWfromCLI'}}
-    slapd_mdb_rootdn_password: {{'PWfromCLI'}}
-    slapd_monitor_rootdn_password: {{'PWfromCLI'}}
-    slapd_additional_modules: [ 'memberof' ]
-    slapd_mdb_config:
-      olcSuffix: "dc=example,dc=com"
-    slapd_mdb_overlays:
-      memberof:
-        olcOverlay: memberof
-        objectClass: olcMemberOf
-        olcMemberOfDangling: ignore
+     - name: Start and Enable slapd (LDAP deamon)
+       service: 
+         name: slapd 
+         state: started 
+         enabled: yes
+         become: yes
+       become_user: root
 
 
+     - name: Generate password Hash 
+       shell: slappasswd -h {SHA} -s {{ admin_pass }} > {{ path_to_admin_pass_hash }}
 
+     - name: remove password hash from hdb config file, to keep it up to date. save to temp file.
+       shell: grep -v olcRootPW {{ path_to_hdb_conf['src'] }} > {{  path_to_hdb_conf['src'] }}.temp
+
+     - name: get rid of temp file.
+       shell: mv -f {{ path_to_hdb_conf['src'] }}.temp {{ path_to_hdb_conf['src'] }}
+
+     - name: Append password hash to hdb config file
+       shell: "cat {{ path_to_admin_pass_hash }} | xargs echo olcRootPW: >> {{ path_to_hdb_conf['src'] }}"
+
+     - name: Update server hdb configuration from ansible master server
+       template:
+         src: "{{ path_to_hdb_conf['src'] }}"
+         dest: "{{ path_to_hdb_conf['dest'] }}"
+
+     - name: Update server monitor configuration from ansible master server
+       template: 
+         src: "{{ path_to_monitor_conf['src'] }}"
+dest: "{{ path_to_monitor_conf['dest'] }}"
 
