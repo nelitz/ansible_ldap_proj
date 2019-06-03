@@ -2,7 +2,7 @@ import ldap
 import ldap.modlist as modlist
 
 # open LDAP-server protoside [since we use unsecure ldap' we indicate 'ldap' instead 'ldaps']
-l = ldap.initialize("ldap://ldapserver:389/") #the hosts file refer 'ldapserver' to the relevant IP
+l = ldap.initialize("ldap://ldapserver:389/") #the hosts file refers 'ldapserver' to the relevant IP
 
 # Bind/authenticate with a user with apropriate rights to add objects
 pass = raw_input("type user password here >>> ")
